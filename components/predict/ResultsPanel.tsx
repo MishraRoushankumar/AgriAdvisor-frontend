@@ -28,7 +28,7 @@ export function ResultsPanel({ loading, error, cropResult, fertResult }: Results
 
   if (error) {
     return (
-      <Card className="border-rose-300 bg-rose-50 p-6 text-rose-700">
+      <Card className="border-rose-300 bg-rose-50 p-6 text-rose-700 dark:border-rose-700/50 dark:bg-rose-900/20 dark:text-rose-400">
         <div className="mb-2 flex items-center gap-2 text-lg font-semibold">
           <AlertCircle className="h-5 w-5" />
           Prediction failed
@@ -40,7 +40,7 @@ export function ResultsPanel({ loading, error, cropResult, fertResult }: Results
 
   if (!cropResult || !fertResult) {
     return (
-      <Card className="glass-card p-6 text-sm text-slate-600">
+      <Card className="glass-card p-6 text-sm text-slate-600 dark:text-slate-400">
         Submit your inputs to view crop, fertiliser, and SHAP insights.
       </Card>
     );

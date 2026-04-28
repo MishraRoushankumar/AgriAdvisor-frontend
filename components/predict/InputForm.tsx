@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { FEATURE_RANGES } from "@/lib/constants";
 import type { CropInput } from "@/lib/types";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useEffect, useState } from "react";
 
 interface InputFormProps {
   values: CropInput;
@@ -35,12 +37,12 @@ function NumberSliderField({
 }) {
   const range = FEATURE_RANGES[name];
   return (
-    <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
+    <div className="space-y-2 rounded-xl border border-slate-200 bg-white/60 p-3 dark:border-slate-700 dark:bg-slate-800/60">
       <div className="flex items-center justify-between">
-        <Label htmlFor={name} className="text-sm text-slate-700">
+        <Label htmlFor={name} className="text-sm text-slate-700 dark:text-slate-300">
           {label}
         </Label>
-        <span className="text-sm font-semibold text-emerald-700">
+        <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
           {value} {range.unit}
         </span>
       </div>
@@ -59,14 +61,22 @@ function NumberSliderField({
         max={range.max}
         step={range.step}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
+        className="border-slate-200 bg-white text-slate-900 placeholder:text-slate-400
+                   dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
       />
     </div>
   );
 }
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { useEffect, useState } from "react";
+// ─── Shared accordion item dark-mode classes ────────────────────────────────
+const itemCls = "border border-gray-200 rounded-lg overflow-hidden dark:border-slate-700";
+const triggerCls =
+  "data-[state=open]:bg-green-50 bg-white text-green-800 font-semibold text-sm px-4 py-3 " +
+  "hover:no-underline [&[data-state=open]]:border-b border-gray-200 " +
+  "dark:data-[state=open]:bg-emerald-900/30 dark:bg-slate-800 dark:text-emerald-400 " +
+  "dark:hover:bg-slate-700 dark:[&[data-state=open]]:border-slate-700";
+const contentCls =
+  "px-4 pb-4 pt-2 space-y-3 bg-white border-t-0 dark:bg-slate-800 dark:border-slate-700";
 
 export function InputForm({
   values,
@@ -90,52 +100,47 @@ export function InputForm({
   }, []);
 
   return (
-    <div className="glass-card p-5 lg:sticky lg:top-24 flex flex-col gap-4">
+    <div className="glass-card p-4 sm:p-5 lg:sticky lg:top-24 flex flex-col gap-4">
       <Accordion type="multiple" value={openItems} onValueChange={setOpenItems} className="flex flex-col gap-2">
-        
-        <AccordionItem value="soil" className="border border-gray-200 rounded-lg overflow-hidden">
-          <AccordionTrigger className="data-[state=open]:bg-green-50 bg-white text-green-800 font-semibold text-sm px-4 py-3 hover:no-underline [&[data-state=open]]:border-b border-gray-200">
+
+        <AccordionItem value="soil" className={itemCls}>
+          <AccordionTrigger className={triggerCls}>
             🌱 Soil Nutrients
           </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4 pt-2 space-y-3 bg-white border-t-0">
-            <NumberSliderField label="Nitrogen (N)" name="N" value={values.N} onChange={(next) => onValueChange("N", next)} />
-            <NumberSliderField label="Phosphorous (P)" name="P" value={values.P} onChange={(next) => onValueChange("P", next)} />
-            <NumberSliderField label="Potassium (K)" name="K" value={values.K} onChange={(next) => onValueChange("K", next)} />
-            <NumberSliderField label="pH" name="ph" value={values.ph} onChange={(next) => onValueChange("ph", next)} />
+          <AccordionContent className={contentCls}>
+            <NumberSliderField label="Nitrogen (N)"    name="N"   value={values.N}   onChange={(next) => onValueChange("N", next)} />
+            <NumberSliderField label="Phosphorous (P)" name="P"   value={values.P}   onChange={(next) => onValueChange("P", next)} />
+            <NumberSliderField label="Potassium (K)"   name="K"   value={values.K}   onChange={(next) => onValueChange("K", next)} />
+            <NumberSliderField label="pH"              name="ph"  value={values.ph}  onChange={(next) => onValueChange("ph", next)} />
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="climate" className="border border-gray-200 rounded-lg overflow-hidden">
-          <AccordionTrigger className="data-[state=open]:bg-green-50 bg-white text-green-800 font-semibold text-sm px-4 py-3 hover:no-underline [&[data-state=open]]:border-b border-gray-200">
+        <AccordionItem value="climate" className={itemCls}>
+          <AccordionTrigger className={triggerCls}>
             🌤️ Climate Conditions
           </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4 pt-2 space-y-3 bg-white border-t-0">
-            <NumberSliderField
-              label="Temperature"
-              name="temperature"
-              value={values.temperature}
-              onChange={(next) => onValueChange("temperature", next)}
-            />
-            <NumberSliderField label="Humidity" name="humidity" value={values.humidity} onChange={(next) => onValueChange("humidity", next)} />
-            <NumberSliderField label="Soil Moisture" name="moisture" value={values.moisture} onChange={(next) => onValueChange("moisture", next)} />
-            <NumberSliderField label="Rainfall" name="rainfall" value={values.rainfall} onChange={(next) => onValueChange("rainfall", next)} />
+          <AccordionContent className={contentCls}>
+            <NumberSliderField label="Temperature"  name="temperature" value={values.temperature} onChange={(next) => onValueChange("temperature", next)} />
+            <NumberSliderField label="Humidity"     name="humidity"    value={values.humidity}    onChange={(next) => onValueChange("humidity", next)} />
+            <NumberSliderField label="Soil Moisture" name="moisture"   value={values.moisture}    onChange={(next) => onValueChange("moisture", next)} />
+            <NumberSliderField label="Rainfall"     name="rainfall"    value={values.rainfall}    onChange={(next) => onValueChange("rainfall", next)} />
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="fertiliser" className="border border-gray-200 rounded-lg overflow-hidden">
-          <AccordionTrigger className="data-[state=open]:bg-green-50 bg-white text-green-800 font-semibold text-sm px-4 py-3 hover:no-underline [&[data-state=open]]:border-b border-gray-200">
+        <AccordionItem value="fertiliser" className={itemCls}>
+          <AccordionTrigger className={triggerCls}>
             🧪 Fertiliser Inputs
           </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4 pt-2 space-y-3 bg-white border-t-0">
+          <AccordionContent className={contentCls}>
             <div className="space-y-2">
-              <Label className="text-slate-700">Soil Type</Label>
+              <Label className="text-slate-700 dark:text-slate-300">Soil Type</Label>
               <Select value={soilType} onValueChange={onSoilTypeChange}>
-                <SelectTrigger className="border-slate-200 bg-white text-slate-900">
+                <SelectTrigger className="border-slate-200 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
                   <SelectValue placeholder="Select soil type" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100">
                   {soilTypes.map((option) => (
-                    <SelectItem key={option} value={option}>
+                    <SelectItem key={option} value={option} className="dark:focus:bg-slate-800">
                       {option}
                     </SelectItem>
                   ))}
@@ -143,21 +148,21 @@ export function InputForm({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-slate-700">Crop Type</Label>
+              <Label className="text-slate-700 dark:text-slate-300">Crop Type</Label>
               <Select value={cropType} onValueChange={onCropTypeChange}>
-                <SelectTrigger className="border-slate-200 bg-white text-slate-900">
+                <SelectTrigger className="border-slate-200 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
                   <SelectValue placeholder="Select crop type" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100">
                   {cropTypes.map((option) => (
-                    <SelectItem key={option} value={option}>
+                    <SelectItem key={option} value={option} className="dark:focus:bg-slate-800">
                       {option}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {autoFilled && (
-                <p className="text-xs italic text-gray-500">
+                <p className="text-xs italic text-gray-500 dark:text-slate-400">
                   Auto-mapped from predicted crop — you can change this
                 </p>
               )}
@@ -168,7 +173,7 @@ export function InputForm({
       </Accordion>
 
       <Button
-        className="w-full mt-4 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-white hover:from-emerald-400 hover:to-green-500"
+        className="w-full mt-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 text-white hover:from-emerald-400 hover:to-green-500"
         onClick={onSubmit}
         disabled={loading}
       >

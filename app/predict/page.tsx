@@ -105,20 +105,21 @@ export default function PredictPage() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-8 md:py-10">
+    <main className="mx-auto w-full max-w-7xl flex-1 px-3 py-6 sm:px-6 md:px-8 md:py-10">
       <div className="mb-6">
         <h1 className="section-title">Prediction Dashboard</h1>
         <p className="section-subtitle">Enter soil and climate inputs to get crop and fertiliser recommendations.</p>
       </div>
 
       {metaWarning ? (
-        <div className="mb-4 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+        <div className="mb-4 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-700/50 dark:bg-amber-900/20 dark:text-amber-400">
           <AlertCircle className="h-4 w-4" />
           {metaWarning}
         </div>
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-5">
+        {/* Input form — full width on mobile, left column on desktop */}
         <section className="lg:col-span-2">
           <InputForm
             values={values}
