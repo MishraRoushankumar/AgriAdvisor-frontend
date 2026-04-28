@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Leaf, Menu } from "lucide-react";
+import { checkApiHealth } from "@/lib/api";
 
 const links = [
   { href: "/", label: "Home" },
@@ -14,6 +15,21 @@ const links = [
 export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isApiLive, setIsApiLive] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    const check = async () => {
+      const live = await checkApiHealth();
+      if (mounted) setIsApiLive(live);
+    };
+    check();
+    const interval = setInterval(check, 30000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/70 bg-white/80 backdrop-blur-xl">
@@ -23,6 +39,26 @@ export function Navbar() {
             <Leaf className="h-4 w-4 text-emerald-600" />
           </span>
           <span className="text-lg font-semibold tracking-tight">AgriAdvisor</span>
+          {isApiLive !== null && (
+            <div 
+              className={`flex items-center gap-1.5 ml-2 rounded-full px-2 py-0.5 border ${
+                isApiLive 
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-700" 
+                  : "border-red-200 bg-red-50 text-red-700"
+              }`}
+              title={isApiLive ? "API is live" : "API is offline"}
+            >
+              <div className="relative flex h-2 w-2">
+                {isApiLive && (
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                )}
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${isApiLive ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
+              </div>
+              <span className="text-[10px] font-medium uppercase tracking-wider hidden sm:inline-block">
+                {isApiLive ? "API Live" : "Offline"}
+              </span>
+            </div>
+          )}
         </Link>
         <nav className="glass-surface hidden md:flex items-center gap-1 p-1">
           {links.map((link) => {

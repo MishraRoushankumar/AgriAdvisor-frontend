@@ -57,3 +57,12 @@ export async function getOptions(): Promise<MetaOptions> {
   const res = await fetch(`${API_BASE}/meta/options`);
   return parseResponse<MetaOptions>(res, "Failed to fetch options");
 }
+
+export async function checkApiHealth(): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE}/`, { method: "GET" });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
